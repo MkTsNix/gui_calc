@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 
 
 class Ui_MainWindow(object):
@@ -116,7 +117,7 @@ class Ui_MainWindow(object):
         self.btn_9.setText(_translate("MainWindow", "9"))
         self.btn_plus.setText(_translate("MainWindow", "+"))
         self.btn_minus.setText(_translate("MainWindow", "-"))
-        self.btn_mult.setText(_translate("MainWindow", "-"))
+        self.btn_mult.setText(_translate("MainWindow", "*"))
         self.btn_div.setText(_translate("MainWindow", "/"))
 
     def add_functions(self):
@@ -145,9 +146,31 @@ class Ui_MainWindow(object):
             self.label_result.setText(self.label_result.text() + number)
 
     def result(self):
-        res = eval(self.label_result.text())
-        self.label_result.setText("Result: " + str(res))
-        self.is_equel = True
+        if not self.is_equel:
+            res = eval(self.label_result.text())
+            self.label_result.setText("Result: " + str(res))
+            self.is_equel = True
+        else:
+            error = QMessageBox()
+            error.setWindowTitle("Error")
+            error.setText("This task is not availible now")
+            error.setIcon(QMessageBox.Warning)
+            error.setStandardButtons(QMessageBox.Reset|QMessageBox.Ok|QMessageBox.Cancel)
+
+            error.setDefaultButton(QMessageBox.Ok)
+            error.setInformativeText("This action cannot be performed twice")
+            error.setDetailedText("Details")
+
+            error.buttonClicked.connect(self.popup_action)
+
+            error.exec_()
+
+    def popup_action(self, btn):
+        if btn.text() == "Ok":
+            print("Print ok")
+        elif btn.text() == "Reset":
+            self.label_result.setText("")
+            self.is_equel = False
 
 
 if __name__ == "__main__":
